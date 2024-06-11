@@ -31,9 +31,11 @@ a.base {
 .active:active,
 .focus:focus,
 .checked:checked,
-label.active:has(:active),
-label.focus:focus-within,
-label.checked:has(:checked) {
+.hover:hover ~ label,
+.active:active ~ label,
+.focus:focus ~ label,
+.checked:checked ~ label
+{
   color: white;
   background-color: blue;
 }

@@ -129,16 +129,22 @@ function App() {
                   )}
                 </td>
                 <td>
-                  <label className={classNames("base", className)}>
-                    <input type="radio" disabled={isDisabled} />
-                    radio
-                  </label>
+                  <input
+                    id={`radio-${className}`}
+                    type="radio"
+                    className={classNames("base", className)}
+                    disabled={isDisabled}
+                  />
+                  <label htmlFor={`radio-${className}`}>radio</label>
                 </td>
                 <td>
-                  <label className={classNames("base", className)}>
-                    <input type="checkbox" disabled={isDisabled} />
-                    check
-                  </label>
+                  <input
+                    id={`cb-${className}`}
+                    type="checkbox"
+                    className={classNames("base", className)}
+                    disabled={isDisabled}
+                  />
+                  <label htmlFor={`cb-${className}`}>check</label>
                 </td>
               </tr>
             );
