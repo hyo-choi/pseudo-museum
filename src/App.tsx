@@ -52,11 +52,7 @@ function App() {
         <table>
           <tr>
             <th>{LABEL_STYLED_CHAR}</th>
-            <td>
-              스타일이 input을 wrapping한 label에 적용됨
-              <br />
-              (🤔🤔🤔 :has때문에 고민 필요)
-            </td>
+            <td>트리거되면 옆의 글자에 스타일이 적용됨</td>
           </tr>
           <tr>
             <th>{UNAVAILABLE_CHAR}</th>
@@ -129,22 +125,26 @@ function App() {
                   )}
                 </td>
                 <td>
-                  <input
-                    id={`radio-${className}`}
-                    type="radio"
-                    className={classNames("base", className)}
-                    disabled={isDisabled}
-                  />
-                  <label htmlFor={`radio-${className}`}>radio</label>
+                  <div className="flex center between">
+                    <input
+                      id={`radio-${className}`}
+                      type="radio"
+                      className={classNames("base", className)}
+                      disabled={isDisabled}
+                    />
+                    <p>triggered</p>
+                  </div>
                 </td>
                 <td>
-                  <input
-                    id={`cb-${className}`}
-                    type="checkbox"
-                    className={classNames("base", className)}
-                    disabled={isDisabled}
-                  />
-                  <label htmlFor={`cb-${className}`}>check</label>
+                  <div className="flex center between">
+                    <input
+                      id={`cb-${className}`}
+                      type="checkbox"
+                      className={classNames("base", className)}
+                      disabled={isDisabled}
+                    />
+                    <p>triggered</p>
+                  </div>
                 </td>
               </tr>
             );

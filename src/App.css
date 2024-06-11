@@ -20,15 +20,21 @@ td, th {
   padding: 4px 8px;
 }
 
+input[type="radio"],
+input[type="checkbox"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+}
+
 .hover:hover,
 .active:active,
 .focus:focus,
 .checked:checked,
-.hover:hover ~ label,
-.active:active ~ label,
-.focus:focus ~ label,
-.checked:checked ~ label
-{
+.hover:hover ~ p,
+.active:active ~ p,
+.focus:focus ~ p,
+.checked:checked ~ p {
   color: white;
   background-color: blue;
 }
@@ -44,4 +50,8 @@ td, th {
 .center {
   align-items: center;
   justify-content: center;
+}
+
+.between {
+  justify-content: space-between;
 }
