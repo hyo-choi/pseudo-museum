@@ -1,0 +1,28 @@
+{
+  "name": "pseudo-museum",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint \"src/**\"",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@hyo-choi/eslint-config": "hyo-choi/eslint-config#a4bbd944ebd5360c5c97f69839ca8775594dac49",
+    "@hyo-choi/prettier-config": "hyo-choi/prettier-config#c0228ce87fad964a4c0168a44b88c969783b3802",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "prettier": "^3.3.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  }
+}
