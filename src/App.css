@@ -20,13 +20,6 @@ td, th {
   padding: 4px 8px;
 }
 
-a.base {
-  color: black;
-  @media screen and (prefer-color-scheme: dark) {
-    color: white;
-  }
-}
-
 .hover:hover,
 .active:active,
 .focus:focus,
