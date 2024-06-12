@@ -41,13 +41,17 @@ function App() {
   return (
     <main className="flex column">
       <section className="flex">
+        <p>
+          조건이 만족되면 요소에 <span className="triggered">이 스타일</span>이
+          적용됩니다.
+        </p>
         <label className="flex center">
           <input
             type="checkbox"
             onChange={() => toggleIsDisabled()}
             checked={isDisabled}
           />
-          disable?
+          disable 상태로 전환
         </label>
         <table>
           <tr>

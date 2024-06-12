@@ -27,6 +27,7 @@ input[type="checkbox"] {
   height: 18px;
 }
 
+.triggered,
 .hover:hover,
 .active:active,
 .focus:focus,
