@@ -62,10 +62,14 @@ input[type="checkbox"] {
   justify-content: space-between;
 }
 
-.gap-1 {
+.gap-sm {
+  gap: 0.5rem;
+}
+
+.gap-md {
   gap: 1rem;
 }
 
-.gap-2 {
+.gap-lg {
   gap: 2rem;
 }

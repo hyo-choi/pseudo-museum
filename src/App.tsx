@@ -39,13 +39,13 @@ const UNAVAILABLE_CHAR = `-`;
 function App() {
   const [isDisabled, toggleIsDisabled] = useReducer((prev) => !prev, false);
   return (
-    <main className="flex column gap-2">
-      <section className="flex column gap-1">
+    <main className="flex column gap-lg">
+      <section className="flex column gap-md">
         <p>
           조건이 만족되면 요소에 <span className="triggered">이 스타일</span>이
           적용됩니다.
         </p>
-        <label className="flex center">
+        <label className="flex center gap-sm">
           <input
             type="checkbox"
             onChange={() => toggleIsDisabled()}
