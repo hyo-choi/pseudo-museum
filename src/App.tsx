@@ -39,8 +39,8 @@ const UNAVAILABLE_CHAR = `-`;
 function App() {
   const [isDisabled, toggleIsDisabled] = useReducer((prev) => !prev, false);
   return (
-    <main className="flex column">
-      <section className="flex">
+    <main className="flex column gap-2">
+      <section className="flex column gap-1">
         <p>
           조건이 만족되면 요소에 <span className="triggered">이 스타일</span>이
           적용됩니다.
