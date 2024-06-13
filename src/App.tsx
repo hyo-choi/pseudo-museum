@@ -19,6 +19,8 @@ type PseudoClass = (typeof allPseudoClasses)[number];
 
 const LABEL_ALIEN_CHAR = `👽`;
 const UNAVAILABLE_CHAR = `-`;
+const MDN_PSEUDO_CLASS_BASE_URL =
+  "https://developer.mozilla.org/en-US/docs/Web/CSS/:";
 
 interface MuseumElement<
   ElementType extends keyof JSX.IntrinsicElements,
@@ -160,7 +162,14 @@ function App() {
           <tbody>
             {allPseudoClasses.map((className) => (
               <tr key={className}>
-                <th>{className}</th>
+                <th>
+                  <a
+                    href={`${MDN_PSEUDO_CLASS_BASE_URL}${className}`}
+                    target="_blank"
+                  >
+                    {className}
+                  </a>
+                </th>
                 {elementInfos.map(
                   ({
                     elementType,
