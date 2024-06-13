@@ -2,31 +2,20 @@ import { useReducer } from "react";
 import "./App.css";
 import classNames from "classnames";
 
+const commonPseudoClasses = ["hover", "active"] as const;
+const interactionPseudoClasses = ["focus"] as const;
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes
-const userActionPseudoClasses = ["hover", "active", "focus"] as const;
+const userActionPseudoClasses = [
+  ...commonPseudoClasses,
+  ...interactionPseudoClasses,
+];
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#input_pseudo-classes
 const inputCheckablePseudoClasses = ["checked"] as const;
 const inputPseudoClasses = [...inputCheckablePseudoClasses];
 
-const userActionElementLabels = [
-  "div (w. a11y)",
-  "a",
-  "input (button)",
-] as const;
-const inputCheckableElementLabels = [
-  "input (radio)",
-  "input (checkbox)",
-] as const;
-const inputElementLabels = [
-  "input (text)",
-  ...inputCheckableElementLabels,
-] as const;
+const allPseudoClasses = [...userActionPseudoClasses, ...inputPseudoClasses];
 
-const pseudoClasses = [...userActionPseudoClasses, ...inputPseudoClasses];
-const elementLabels = [...userActionElementLabels, ...inputElementLabels];
-
-type ElementLabel = (typeof elementLabels)[number];
-type PseudoClass = (typeof pseudoClasses)[number];
+type PseudoClass = (typeof allPseudoClasses)[number];
 
 const LABEL_ALIEN_CHAR = `👽`;
 const UNAVAILABLE_CHAR = `-`;
@@ -37,24 +26,13 @@ interface MuseumElement<
   Attribute extends
     React.HTMLAttributes<Element> = React.HTMLAttributes<Element>,
 > {
-  tableLabel: ElementLabel;
+  tableLabel: string;
   elementType: ElementType;
   attributes?: Attribute;
   availableClasses: Array<PseudoClass>;
   isAlien?: boolean;
   canDisable?: boolean;
 }
-
-// interface MuseumInputElement extends MuseumElement {
-//   elementType: "input";
-//   attributes?: React.InputHTMLAttributes<HTMLInputElement>;
-//   canDisable: true;
-// }
-// interface MuseumAnchorElement extends MuseumElement {
-//   elementType: "a";
-//   attributes?: React.AnchorHTMLAttributes<HTMLAnchorElement>;
-//   canDisable: false;
-// }
 
 const elementInfos: Array<
   | MuseumElement<"div", HTMLDivElement>
@@ -70,9 +48,17 @@ const elementInfos: Array<
     >
 > = [
   {
+    tableLabel: "div",
+    elementType: "div",
+    availableClasses: [...commonPseudoClasses],
+    attributes: {
+      children: "div",
+    },
+  },
+  {
     tableLabel: "div (w. a11y)",
     elementType: "div",
-    availableClasses: [...userActionPseudoClasses],
+    availableClasses: userActionPseudoClasses,
     attributes: {
       tabIndex: 0,
       role: "button",
@@ -82,7 +68,7 @@ const elementInfos: Array<
   {
     tableLabel: "a",
     elementType: "a",
-    availableClasses: [...userActionPseudoClasses],
+    availableClasses: userActionPseudoClasses,
     attributes: {
       href: "#",
       children: "anchor",
@@ -91,7 +77,7 @@ const elementInfos: Array<
   {
     tableLabel: "input (button)",
     elementType: "input",
-    availableClasses: [...userActionPseudoClasses],
+    availableClasses: userActionPseudoClasses,
     attributes: {
       type: "button",
       value: "button",
@@ -104,7 +90,7 @@ const elementInfos: Array<
     attributes: {
       type: "text",
     },
-    availableClasses: [...userActionPseudoClasses],
+    availableClasses: userActionPseudoClasses,
     canDisable: true,
   },
   {
@@ -114,7 +100,7 @@ const elementInfos: Array<
       type: "radio",
     },
     isAlien: true,
-    availableClasses: pseudoClasses,
+    availableClasses: allPseudoClasses,
     canDisable: true,
   },
   {
@@ -124,7 +110,7 @@ const elementInfos: Array<
       type: "checkbox",
     },
     isAlien: true,
-    availableClasses: pseudoClasses,
+    availableClasses: allPseudoClasses,
     canDisable: true,
   },
 ];
@@ -172,7 +158,7 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {pseudoClasses.map((className) => (
+            {allPseudoClasses.map((className) => (
               <tr key={className}>
                 <th>{className}</th>
                 {elementInfos.map(
