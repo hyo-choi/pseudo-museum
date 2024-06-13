@@ -1,4 +1,4 @@
-import { ReactNode, useReducer } from "react";
+import { useReducer } from "react";
 import "./App.css";
 import classNames from "classnames";
 
@@ -8,33 +8,39 @@ const userActionPseudoClasses = ["hover", "active", "focus"] as const;
 const inputCheckablePseudoClasses = ["checked"] as const;
 const inputPseudoClasses = [...inputCheckablePseudoClasses];
 
-const userActionElementNames = ["div (w. a11y)", "a", "button"] as const;
-const inputCheckableElementNames = [
+const userActionElementLabels = ["div (w. a11y)", "a", "button"] as const;
+const inputCheckableElementLabels = [
   "input (radio)",
   "input (checkbox)",
 ] as const;
-const inputElementNames = [
+const inputElementLabels = [
   "input (text)",
-  ...inputCheckableElementNames,
+  ...inputCheckableElementLabels,
 ] as const;
 
-function getIsInputCheckablePseudoClass(
-  className: string
-): className is (typeof inputCheckablePseudoClasses)[number] {
-  return inputCheckablePseudoClasses.includes(className as any);
-}
-
-function getIsInputCheckableElementName(
-  name: string
-): name is (typeof inputCheckableElementNames)[number] {
-  return inputCheckableElementNames.includes(name as any);
-}
-
 const pseudoClasses = [...userActionPseudoClasses, ...inputPseudoClasses];
-const elementNames = [...userActionElementNames, ...inputElementNames];
+const elementLabels = [...userActionElementLabels, ...inputElementLabels];
 
-const LABEL_STYLED_CHAR = `👽`;
+type ElementLabel = (typeof elementLabels)[number];
+type PseudoClass = (typeof pseudoClasses)[number];
+
+const LABEL_ALIEN_CHAR = `👽`;
 const UNAVAILABLE_CHAR = `-`;
+
+interface MuseumElement {
+  label: ElementLabel;
+  availableClasses: Array<PseudoClass>;
+  isAlien?: boolean;
+}
+
+const elementInfos: Array<MuseumElement> = [
+  { label: "div (w. a11y)", availableClasses: [...userActionPseudoClasses] },
+  { label: "a", availableClasses: [...userActionPseudoClasses] },
+  { label: "button", availableClasses: [...userActionPseudoClasses] },
+  { label: "input (text)", availableClasses: [...userActionPseudoClasses] },
+  { label: "input (radio)", isAlien: true, availableClasses: pseudoClasses },
+  { label: "input (checkbox)", isAlien: true, availableClasses: pseudoClasses },
+];
 
 function App() {
   const [isDisabled, toggleIsDisabled] = useReducer((prev) => !prev, false);
@@ -55,7 +61,7 @@ function App() {
         </label>
         <table>
           <tr>
-            <th>{LABEL_STYLED_CHAR}</th>
+            <th>{LABEL_ALIEN_CHAR}</th>
             <td>트리거되면 옆의 글자에 스타일이 적용됨</td>
           </tr>
           <tr>
@@ -69,90 +75,89 @@ function App() {
           <thead>
             <tr>
               <th></th>
-              {elementNames.map((elementName) => {
+              {elementInfos.map(({ label, isAlien }) => {
                 return (
-                  <th key={elementName}>
-                    {getIsInputCheckableElementName(elementName)
-                      ? `${LABEL_STYLED_CHAR} ${elementName}`
-                      : elementName}
+                  <th key={label}>
+                    {isAlien ? `${LABEL_ALIEN_CHAR} ${label}` : label}
                   </th>
                 );
               })}
             </tr>
           </thead>
-          {pseudoClasses.map((className) => {
-            function withCheckableFilter(element: ReactNode) {
-              return getIsInputCheckablePseudoClass(className) ? (
-                <div className="flex center">{UNAVAILABLE_CHAR}</div>
-              ) : (
-                element
-              );
-            }
-            return (
-              <tr>
+          <tbody>
+            {pseudoClasses.map((className) => (
+              <tr key={className}>
                 <th>{className}</th>
-                <td>
-                  {withCheckableFilter(
-                    <div
-                      tabIndex={0}
-                      role="button"
-                      className={classNames("base", className)}
-                    >
-                      div w. a11y
-                    </div>
-                  )}
-                </td>
-                <td>
-                  {withCheckableFilter(
-                    <a className={classNames("base", className)} href="#">
-                      anchor
-                    </a>
-                  )}
-                </td>
-                <td>
-                  {withCheckableFilter(
-                    <button
-                      className={classNames("base", className)}
-                      disabled={isDisabled}
-                    >
-                      button
-                    </button>
-                  )}
-                </td>
-                <td>
-                  {withCheckableFilter(
-                    <input
-                      type="text"
-                      className={classNames("base", className)}
-                      disabled={isDisabled}
-                    />
-                  )}
-                </td>
-                <td>
-                  <div className="flex center between">
-                    <input
-                      id={`radio-${className}`}
-                      type="radio"
-                      className={classNames("base", className)}
-                      disabled={isDisabled}
-                    />
-                    <p>triggered</p>
-                  </div>
-                </td>
-                <td>
-                  <div className="flex center between">
-                    <input
-                      id={`cb-${className}`}
-                      type="checkbox"
-                      className={classNames("base", className)}
-                      disabled={isDisabled}
-                    />
-                    <p>triggered</p>
-                  </div>
-                </td>
+                {elementInfos.map(({ label, availableClasses }) => {
+                  return (
+                    <td key={label}>
+                      {availableClasses.includes(className) ? (
+                        (() => {
+                          switch (label) {
+                            case "a":
+                              return (
+                                <a
+                                  className={classNames("base", className)}
+                                  href="#"
+                                >
+                                  anchor
+                                </a>
+                              );
+                            case "button":
+                              return (
+                                <button
+                                  className={classNames("base", className)}
+                                  disabled={isDisabled}
+                                >
+                                  button
+                                </button>
+                              );
+                            case "div (w. a11y)":
+                              return (
+                                <div
+                                  tabIndex={0}
+                                  role="button"
+                                  className={classNames("base", className)}
+                                >
+                                  div w. a11y
+                                </div>
+                              );
+                            case "input (text)":
+                              return (
+                                <input
+                                  type="text"
+                                  className={classNames("base", className)}
+                                  disabled={isDisabled}
+                                />
+                              );
+                            case "input (checkbox)":
+                            case "input (radio)":
+                              return (
+                                <div className="flex center between">
+                                  <input
+                                    id={`radio-${className}`}
+                                    type={
+                                      label === "input (checkbox)"
+                                        ? "checkbox"
+                                        : "radio"
+                                    }
+                                    className={classNames("base", className)}
+                                    disabled={isDisabled}
+                                  />
+                                  <p>triggered</p>
+                                </div>
+                              );
+                          }
+                        })()
+                      ) : (
+                        <div className="flex center">{UNAVAILABLE_CHAR}</div>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
-            );
-          })}
+            ))}
+          </tbody>
         </table>
       </section>
     </main>
