@@ -8,7 +8,11 @@ const userActionPseudoClasses = ["hover", "active", "focus"] as const;
 const inputCheckablePseudoClasses = ["checked"] as const;
 const inputPseudoClasses = [...inputCheckablePseudoClasses];
 
-const userActionElementLabels = ["div (w. a11y)", "a", "button"] as const;
+const userActionElementLabels = [
+  "div (w. a11y)",
+  "a",
+  "input (button)",
+] as const;
 const inputCheckableElementLabels = [
   "input (radio)",
   "input (checkbox)",
@@ -27,19 +31,102 @@ type PseudoClass = (typeof pseudoClasses)[number];
 const LABEL_ALIEN_CHAR = `👽`;
 const UNAVAILABLE_CHAR = `-`;
 
-interface MuseumElement {
-  label: ElementLabel;
+interface MuseumElement<
+  ElementType extends keyof JSX.IntrinsicElements,
+  Element extends HTMLElement = HTMLElement,
+  Attribute extends
+    React.HTMLAttributes<Element> = React.HTMLAttributes<Element>,
+> {
+  tableLabel: ElementLabel;
+  elementType: ElementType;
+  attributes?: Attribute;
   availableClasses: Array<PseudoClass>;
   isAlien?: boolean;
+  canDisable?: boolean;
 }
 
-const elementInfos: Array<MuseumElement> = [
-  { label: "div (w. a11y)", availableClasses: [...userActionPseudoClasses] },
-  { label: "a", availableClasses: [...userActionPseudoClasses] },
-  { label: "button", availableClasses: [...userActionPseudoClasses] },
-  { label: "input (text)", availableClasses: [...userActionPseudoClasses] },
-  { label: "input (radio)", isAlien: true, availableClasses: pseudoClasses },
-  { label: "input (checkbox)", isAlien: true, availableClasses: pseudoClasses },
+// interface MuseumInputElement extends MuseumElement {
+//   elementType: "input";
+//   attributes?: React.InputHTMLAttributes<HTMLInputElement>;
+//   canDisable: true;
+// }
+// interface MuseumAnchorElement extends MuseumElement {
+//   elementType: "a";
+//   attributes?: React.AnchorHTMLAttributes<HTMLAnchorElement>;
+//   canDisable: false;
+// }
+
+const elementInfos: Array<
+  | MuseumElement<"div", HTMLDivElement>
+  | MuseumElement<
+      "a",
+      HTMLAnchorElement,
+      React.AnchorHTMLAttributes<HTMLAnchorElement>
+    >
+  | MuseumElement<
+      "input",
+      HTMLInputElement,
+      React.InputHTMLAttributes<HTMLInputElement>
+    >
+> = [
+  {
+    tableLabel: "div (w. a11y)",
+    elementType: "div",
+    availableClasses: [...userActionPseudoClasses],
+    attributes: {
+      tabIndex: 0,
+      role: "button",
+      children: "div",
+    },
+  },
+  {
+    tableLabel: "a",
+    elementType: "a",
+    availableClasses: [...userActionPseudoClasses],
+    attributes: {
+      href: "#",
+      children: "anchor",
+    },
+  },
+  {
+    tableLabel: "input (button)",
+    elementType: "input",
+    availableClasses: [...userActionPseudoClasses],
+    attributes: {
+      type: "button",
+      value: "button",
+    },
+    canDisable: true,
+  },
+  {
+    tableLabel: "input (text)",
+    elementType: "input",
+    attributes: {
+      type: "text",
+    },
+    availableClasses: [...userActionPseudoClasses],
+    canDisable: true,
+  },
+  {
+    tableLabel: "input (radio)",
+    elementType: "input",
+    attributes: {
+      type: "radio",
+    },
+    isAlien: true,
+    availableClasses: pseudoClasses,
+    canDisable: true,
+  },
+  {
+    tableLabel: "input (checkbox)",
+    elementType: "input",
+    attributes: {
+      type: "checkbox",
+    },
+    isAlien: true,
+    availableClasses: pseudoClasses,
+    canDisable: true,
+  },
 ];
 
 function App() {
@@ -75,10 +162,10 @@ function App() {
           <thead>
             <tr>
               <th></th>
-              {elementInfos.map(({ label, isAlien }) => {
+              {elementInfos.map(({ tableLabel, isAlien }) => {
                 return (
-                  <th key={label}>
-                    {isAlien ? `${LABEL_ALIEN_CHAR} ${label}` : label}
+                  <th key={tableLabel}>
+                    {isAlien ? `${LABEL_ALIEN_CHAR} ${tableLabel}` : tableLabel}
                   </th>
                 );
               })}
@@ -88,73 +175,45 @@ function App() {
             {pseudoClasses.map((className) => (
               <tr key={className}>
                 <th>{className}</th>
-                {elementInfos.map(({ label, availableClasses }) => {
-                  return (
-                    <td key={label}>
-                      {availableClasses.includes(className) ? (
-                        (() => {
-                          switch (label) {
-                            case "a":
-                              return (
-                                <a
-                                  className={classNames("base", className)}
-                                  href="#"
-                                >
-                                  anchor
-                                </a>
-                              );
-                            case "button":
-                              return (
-                                <button
-                                  className={classNames("base", className)}
-                                  disabled={isDisabled}
-                                >
-                                  button
-                                </button>
-                              );
-                            case "div (w. a11y)":
-                              return (
-                                <div
-                                  tabIndex={0}
-                                  role="button"
-                                  className={classNames("base", className)}
-                                >
-                                  div w. a11y
-                                </div>
-                              );
-                            case "input (text)":
-                              return (
-                                <input
-                                  type="text"
-                                  className={classNames("base", className)}
-                                  disabled={isDisabled}
-                                />
-                              );
-                            case "input (checkbox)":
-                            case "input (radio)":
+                {elementInfos.map(
+                  ({
+                    elementType,
+                    attributes,
+                    tableLabel,
+                    availableClasses,
+                    isAlien,
+                    canDisable,
+                  }) => {
+                    return (
+                      <td key={tableLabel}>
+                        {availableClasses.includes(className) ? (
+                          (() => {
+                            const Element = elementType;
+                            const core = (
+                              <Element
+                                className={classNames("base", className)}
+                                disabled={canDisable ? isDisabled : undefined}
+                                // FIXME: fix type
+                                {...(attributes as any)}
+                              />
+                            );
+                            if (isAlien) {
                               return (
                                 <div className="flex center between">
-                                  <input
-                                    id={`radio-${className}`}
-                                    type={
-                                      label === "input (checkbox)"
-                                        ? "checkbox"
-                                        : "radio"
-                                    }
-                                    className={classNames("base", className)}
-                                    disabled={isDisabled}
-                                  />
+                                  {core}
                                   <p>triggered</p>
                                 </div>
                               );
-                          }
-                        })()
-                      ) : (
-                        <div className="flex center">{UNAVAILABLE_CHAR}</div>
-                      )}
-                    </td>
-                  );
-                })}
+                            }
+                            return core;
+                          })()
+                        ) : (
+                          <div className="flex center">{UNAVAILABLE_CHAR}</div>
+                        )}
+                      </td>
+                    );
+                  }
+                )}
               </tr>
             ))}
           </tbody>
